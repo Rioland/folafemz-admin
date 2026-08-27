@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { IMAGE_MAX_MB, VIDEO_MAX_MB } from '@/lib/env';
 
 export type MediaKind = 'image' | 'video' | 'any';
 
@@ -35,6 +36,21 @@ export function MediaUpload({
   const input = useRef<HTMLInputElement>(null);
 
   async function upload(file: File) {
+    // Reject an oversized file here rather than after sending it. The route
+    // checks again — a browser check is a courtesy, never the enforcement.
+    const isVideoFile = file.type.startsWith('video/');
+    const limitMb = isVideoFile ? VIDEO_MAX_MB : IMAGE_MAX_MB;
+
+    if (file.size > limitMb * 1024 * 1024) {
+      const actual = file.size / 1024 / 1024;
+      setError(
+        `That ${isVideoFile ? 'video' : 'image'} is ${actual.toFixed(1)}MB. ` +
+        `The limit is ${limitMb}MB — please compress it and try again.`
+      );
+      if (input.current) input.current.value = '';
+      return;
+    }
+
     setBusy(true);
     setError(null);
     setProgress(0);
@@ -101,7 +117,14 @@ export function MediaUpload({
             placeholder={kind === 'video' ? '/videos/clip.mp4 or a full URL' : '/images/photo.jpg or a full URL'}
             aria-label="Link"
           />
-          <p className="hint">Paste a link, or choose a file from this device.</p>
+          <p className="hint">
+            Paste a link, or choose a file from this device.{' '}
+            {kind === 'video'
+              ? `Videos up to ${VIDEO_MAX_MB}MB.`
+              : kind === 'image'
+                ? `Images up to ${IMAGE_MAX_MB}MB.`
+                : `Images up to ${IMAGE_MAX_MB}MB, videos up to ${VIDEO_MAX_MB}MB.`}
+          </p>
 
           <div className="uploader__actions">
             <button

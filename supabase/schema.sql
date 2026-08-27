@@ -344,11 +344,13 @@ $$;
 --  Storage
 --  Public bucket: the customer site renders these images directly.
 -- -----------------------------------------------------------------------------
--- 50MB, so fleet video clips fit alongside the stills. Supabase enforces this
--- server-side; UPLOAD_MAX_MB / VIDEO_MAX_MB are the app's own tighter checks.
+-- 30MB: the ceiling for a video, and the largest thing the bucket will accept
+-- from anyone. Supabase enforces this itself, so it holds even if a request
+-- never goes through the upload route. The app applies tighter limits on top —
+-- 1MB for stills — via NEXT_PUBLIC_UPLOAD_MAX_MB and NEXT_PUBLIC_VIDEO_MAX_MB.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (
-  'media', 'media', true, 52428800,
+  'media', 'media', true, 31457280,
   array[
     'image/jpeg','image/png','image/webp','image/avif','image/gif',
     'video/mp4','video/webm','video/quicktime'

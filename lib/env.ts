@@ -11,6 +11,8 @@
 const PUBLIC = {
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
   NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  NEXT_PUBLIC_UPLOAD_MAX_MB: process.env.NEXT_PUBLIC_UPLOAD_MAX_MB,
+  NEXT_PUBLIC_VIDEO_MAX_MB: process.env.NEXT_PUBLIC_VIDEO_MAX_MB,
 } as const;
 
 function must(value: string | undefined, name: string): string {
@@ -36,12 +38,15 @@ export const SUPABASE_SERVICE_KEY = () =>
 export const STORAGE_BUCKET =
   process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET || 'media';
 
-export const UPLOAD_MAX_BYTES =
-  Number(process.env.UPLOAD_MAX_MB || 8) * 1024 * 1024;
+/**
+ * Upload ceilings, in megabytes. Read by the upload route and by the picker in
+ * the browser, so both quote the same figure and neither can drift.
+ */
+export const IMAGE_MAX_MB = Number(PUBLIC.NEXT_PUBLIC_UPLOAD_MAX_MB || 1);
+export const VIDEO_MAX_MB = Number(PUBLIC.NEXT_PUBLIC_VIDEO_MAX_MB || 30);
 
-/** Videos are allowed to be much larger than stills. */
-export const VIDEO_MAX_BYTES =
-  Number(process.env.VIDEO_MAX_MB || 50) * 1024 * 1024;
+export const UPLOAD_MAX_BYTES = IMAGE_MAX_MB * 1024 * 1024;
+export const VIDEO_MAX_BYTES = VIDEO_MAX_MB * 1024 * 1024;
 
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || '';
 export const DEPLOY_HOOK_URL = process.env.DEPLOY_HOOK_URL || '';
