@@ -5,7 +5,11 @@ import { useFormStatus } from 'react-dom';
 import { saveSettings } from '@/app/(dashboard)/settings/actions';
 
 /** Field list mirrors the Settings type in the public site's lib/content.ts. */
-const GROUPS: { title: string; fields: [key: string, label: string, kind?: 'area' | 'lines'][] }[] = [
+const GROUPS: {
+  title: string;
+  hint?: string;
+  fields: [key: string, label: string, kind?: 'area' | 'lines'][];
+}[] = [
   {
     title: 'Business',
     fields: [
@@ -49,19 +53,39 @@ const GROUPS: { title: string; fields: [key: string, label: string, kind?: 'area
     ],
   },
   {
-    title: 'Search and social',
+    title: 'Social links',
+    hint:
+      'Paste the full address of each profile. Leave one empty and it simply ' +
+      'does not appear on the website.',
+    fields: [
+      ['facebookUrl', 'Facebook'],
+      ['instagramUrl', 'Instagram'],
+      ['twitterUrl', 'X (Twitter)'],
+      ['tiktokUrl', 'TikTok'],
+      ['youtubeUrl', 'YouTube'],
+      ['linkedinUrl', 'LinkedIn'],
+    ],
+  },
+  {
+    title: 'Search engines',
     fields: [
       ['metaTitle', 'Meta title'],
       ['metaDescription', 'Meta description', 'area'],
       ['metaKeywords', 'Meta keywords'],
       ['ogImage', 'Share image path'],
-      ['facebookUrl', 'Facebook URL'],
-      ['instagramUrl', 'Instagram URL'],
-      ['twitterUrl', 'X URL'],
-      ['tiktokUrl', 'TikTok URL'],
     ],
   },
 ];
+
+/** Shown greyed-out in empty fields, so the expected format is obvious. */
+const PLACEHOLDERS: Record<string, string> = {
+  facebookUrl: 'https://facebook.com/folafemzglobal',
+  instagramUrl: 'https://instagram.com/folafemzglobal',
+  twitterUrl: 'https://x.com/folafemzglobal',
+  tiktokUrl: 'https://tiktok.com/@folafemzglobal',
+  youtubeUrl: 'https://youtube.com/@folafemzglobal',
+  linkedinUrl: 'https://linkedin.com/company/folafemzglobal',
+};
 
 /** Arrays render one per line; everything else as its string value. */
 function toField(value: unknown): string {
@@ -90,6 +114,7 @@ export function SettingsForm({ settings }: { settings: Record<string, unknown> }
       {GROUPS.map((group) => (
         <div className="card card__pad" key={group.title} style={{ marginBottom: '1.25rem' }}>
           <h2>{group.title}</h2>
+          {group.hint && <p className="hint" style={{ marginTop: '-.35rem' }}>{group.hint}</p>}
           <div className="row">
             {group.fields.map(([key, label, kind]) => (
               <div className="field" key={key}
@@ -97,7 +122,11 @@ export function SettingsForm({ settings }: { settings: Record<string, unknown> }
                 <label htmlFor={key}>{label}</label>
                 {kind
                   ? <textarea id={key} name={key} defaultValue={toField(settings[key])} />
-                  : <input id={key} name={key} type="text" defaultValue={toField(settings[key])} />}
+                  : <input
+                      id={key} name={key} type="text"
+                      defaultValue={toField(settings[key])}
+                      placeholder={PLACEHOLDERS[key]}
+                    />}
               </div>
             ))}
           </div>

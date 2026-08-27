@@ -12,6 +12,22 @@ export type SettingsState = { error?: string; ok?: boolean } | null;
  */
 const ARRAY_KEYS = new Set(['phoneAlt', 'trustPoints']);
 
+/**
+ * Social profiles are rendered straight into href. A value pasted without a
+ * scheme — "facebook.com/folafemz" — is a *relative* URL to a browser, so the
+ * link would point at folafemzglobal.com/facebook.com/folafemz and 404. Add
+ * the scheme rather than making someone notice that themselves.
+ *
+ * Anything already carrying a scheme, and site-relative paths, are left alone.
+ */
+function normaliseUrl(value: string): string {
+  const trimmed = value.trim();
+  if (trimmed === '') return '';
+  if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return trimmed;
+  if (trimmed.startsWith('/')) return trimmed;
+  return `https://${trimmed.replace(/^\/+/, '')}`;
+}
+
 export async function saveSettings(_prev: SettingsState, fd: FormData): Promise<SettingsState> {
   const rows: { key: string; value: unknown }[] = [];
 
@@ -20,7 +36,9 @@ export async function saveSettings(_prev: SettingsState, fd: FormData): Promise<
 
     const value = ARRAY_KEYS.has(key)
       ? raw.split('\n').map((line) => line.trim()).filter(Boolean)
-      : raw.trim();
+      : key.endsWith('Url')
+        ? normaliseUrl(raw)
+        : raw.trim();
 
     rows.push({ key, value });
   }
