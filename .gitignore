@@ -1,0 +1,24 @@
+# dependencies
+node_modules/
+
+# build output
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# environment — never commit real keys. .env.example is the tracked template.
+.env
+.env.*
+!.env.example
+
+# vercel
+.vercel/
+
+# os
+.DS_Store
+Thumbs.db
+
+# logs
+*.log
+npm-debug.log*
