@@ -11,7 +11,7 @@
 
 export type FieldType =
   | 'text' | 'textarea' | 'richtext' | 'number' | 'boolean'
-  | 'lines' | 'select' | 'reference' | 'image' | 'date';
+  | 'lines' | 'select' | 'reference' | 'image' | 'video' | 'date';
 
 export type Field = {
   column: string;
@@ -265,8 +265,8 @@ export const RESOURCES: Resource[] = [
     ascending: true,
     fields: [
       {
-        column: 'src', label: 'Video path', type: 'text', required: true, wide: true,
-        hint: 'A path under the public site, such as /videos/fleet-walkaround.mp4',
+        column: 'src', label: 'Video', type: 'video', required: true, wide: true,
+        hint: 'Upload from this device, or paste a link such as /videos/fleet-walkaround.mp4',
       },
       {
         column: 'orientation', label: 'Orientation', type: 'select',

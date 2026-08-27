@@ -3,7 +3,7 @@
 import { useActionState, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import Link from 'next/link';
-import { ImageUpload } from '@/components/ImageUpload';
+import { MediaUpload } from '@/components/MediaUpload';
 import { slugify } from '@/lib/types';
 import type { Field, Resource } from '@/lib/resources';
 import type { FormState } from '@/app/(dashboard)/content/actions';
@@ -33,15 +33,17 @@ function toInput(field: Field, value: unknown): string {
 }
 
 function FieldInput({
-  field, value, options, onSlugSource,
+  field, value, options, onSlugSource, folder,
 }: {
   field: Field;
   value: unknown;
   options: Options;
   onSlugSource?: (v: string) => void;
+  /** Storage folder for uploads, named after the section. */
+  folder?: string;
 }) {
   const initial = toInput(field, value);
-  const [image, setImage] = useState(initial);
+  const [media, setMedia] = useState(initial);
 
   const id = field.column;
 
@@ -55,11 +57,17 @@ function FieldInput({
       );
 
     case 'image':
+    case 'video':
       return (
         <>
-          <label htmlFor={`${id}-url`}>{field.label}</label>
-          <ImageUpload value={image} onChange={setImage} />
-          <input type="hidden" name={id} value={image} />
+          <label>{field.label}</label>
+          <MediaUpload
+            value={media}
+            onChange={setMedia}
+            kind={field.type === 'video' ? 'video' : 'image'}
+            folder={folder}
+          />
+          <input type="hidden" name={id} value={media} />
         </>
       );
 
@@ -199,6 +207,7 @@ export function ResourceForm({
                   value={row[field.column]}
                   options={options}
                   onSlugSource={field.column === titleColumn ? onSlugSource : undefined}
+                  folder={resource.key}
                 />
                 {field.hint && <p className="hint">{field.hint}</p>}
               </div>

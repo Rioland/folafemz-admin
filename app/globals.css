@@ -156,3 +156,10 @@ textarea { min-height: 110px; resize: vertical; }
   color: #5d6779; padding: 1rem .65rem .3rem; font-weight: 700;
 }
 .sidebar { overflow-y: auto; }
+
+/* Media picker */
+.uploader__preview { object-fit: cover; }
+video.uploader__preview { background: var(--asphalt); }
+.uploader__actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .5rem; }
+.progress { height: 4px; background: var(--line); border-radius: 2px; margin-top: .6rem; overflow: hidden; }
+.progress__bar { height: 100%; background: var(--amber); transition: width .2s ease; }

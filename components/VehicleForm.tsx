@@ -3,7 +3,7 @@
 import { useActionState, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import Link from 'next/link';
-import { ImageUpload } from '@/components/ImageUpload';
+import { MediaUpload } from '@/components/MediaUpload';
 import { slugify, type Category, type Vehicle } from '@/lib/types';
 import type { FormState } from '@/app/(dashboard)/vehicles/actions';
 
@@ -90,7 +90,7 @@ export function VehicleForm({
 
       <div className="card card__pad" style={{ marginBottom: '1.25rem' }}>
         <h2>Photograph</h2>
-        <ImageUpload value={image} onChange={setImage} />
+        <MediaUpload value={image} onChange={setImage} kind="image" folder="fleet" />
         <input type="hidden" name="image" value={image} />
       </div>
 

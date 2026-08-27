@@ -316,15 +316,48 @@ drop policy if exists "anon can submit enquiries" on enquiries;
 create policy "anon can submit enquiries"
   on enquiries for insert to anon with check (true);
 
+-- Published content is readable with the anon key.
+--
+-- Every column in these tables is already on public pages of the website, so
+-- this exposes nothing new. It means the website can build itself straight from
+-- the database without holding the service-role key, which would otherwise sit
+-- in the deployment environment of a public site and grant full write access.
+--
+-- `enquiries` is deliberately absent: it holds customer names and numbers.
+do $$
+declare t text;
+begin
+  foreach t in array array[
+    'categories','vehicles','cities','locations','services','posts','pages',
+    'faqs','testimonials','gallery','videos','trip_rate_tables','trip_rates',
+    'settings'
+  ] loop
+    execute format('drop policy if exists "public can read" on %I', t);
+    execute format(
+      'create policy "public can read" on %I
+         for select to anon using (true)', t);
+  end loop;
+end;
+$$;
+
 -- -----------------------------------------------------------------------------
 --  Storage
 --  Public bucket: the customer site renders these images directly.
 -- -----------------------------------------------------------------------------
-insert into storage.buckets (id, name, public, file_size_limit)
-values ('media', 'media', true, 8388608)
+-- 50MB, so fleet video clips fit alongside the stills. Supabase enforces this
+-- server-side; UPLOAD_MAX_MB / VIDEO_MAX_MB are the app's own tighter checks.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'media', 'media', true, 52428800,
+  array[
+    'image/jpeg','image/png','image/webp','image/avif','image/gif',
+    'video/mp4','video/webm','video/quicktime'
+  ]
+)
 on conflict (id) do update
   set public = excluded.public,
-      file_size_limit = excluded.file_size_limit;
+      file_size_limit = excluded.file_size_limit,
+      allowed_mime_types = excluded.allowed_mime_types;
 
 drop policy if exists "media is publicly readable" on storage.objects;
 create policy "media is publicly readable"

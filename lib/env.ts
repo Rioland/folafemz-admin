@@ -39,6 +39,10 @@ export const STORAGE_BUCKET =
 export const UPLOAD_MAX_BYTES =
   Number(process.env.UPLOAD_MAX_MB || 8) * 1024 * 1024;
 
+/** Videos are allowed to be much larger than stills. */
+export const VIDEO_MAX_BYTES =
+  Number(process.env.VIDEO_MAX_MB || 50) * 1024 * 1024;
+
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || '';
 export const DEPLOY_HOOK_URL = process.env.DEPLOY_HOOK_URL || '';
 
