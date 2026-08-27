@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
+import { MediaUpload } from '@/components/MediaUpload';
 import { useFormStatus } from 'react-dom';
 import { saveSettings } from '@/app/(dashboard)/settings/actions';
 
@@ -8,14 +9,14 @@ import { saveSettings } from '@/app/(dashboard)/settings/actions';
 const GROUPS: {
   title: string;
   hint?: string;
-  fields: [key: string, label: string, kind?: 'area' | 'lines'][];
+  fields: [key: string, label: string, kind?: 'area' | 'lines' | 'image' | 'video'][];
 }[] = [
   {
     title: 'Business',
     fields: [
       ['siteName', 'Site name'],
       ['tagline', 'Tagline'],
-      ['logo', 'Logo path'],
+      ['logo', 'Logo', 'image'],
     ],
   },
   {
@@ -36,7 +37,9 @@ const GROUPS: {
       ['heroEyebrow', 'Hero eyebrow'],
       ['heroHeading', 'Hero heading'],
       ['heroSubheading', 'Hero subheading', 'area'],
-      ['heroImage', 'Hero image path'],
+      ['heroImage', 'Hero image', 'image'],
+      ['heroVideo', 'Hero video', 'video'],
+      ['aboutImage', 'About photograph', 'image'],
       ['fleetNote', 'Fleet note', 'area'],
       ['aboutHeading', 'About heading'],
       ['aboutBody', 'About body', 'area'],
@@ -72,7 +75,7 @@ const GROUPS: {
       ['metaTitle', 'Meta title'],
       ['metaDescription', 'Meta description', 'area'],
       ['metaKeywords', 'Meta keywords'],
-      ['ogImage', 'Share image path'],
+      ['ogImage', 'Share image', 'image'],
     ],
   },
 ];
@@ -92,6 +95,23 @@ function toField(value: unknown): string {
   if (Array.isArray(value)) return value.join('\n');
   if (value === null || value === undefined) return '';
   return String(value);
+}
+
+/** Media settings render the same picker the rest of the dashboard uses. */
+function MediaField({
+  name, label, value, kind,
+}: {
+  name: string; label: string; value: string; kind: 'image' | 'video';
+}) {
+  const [current, setCurrent] = useState(value);
+
+  return (
+    <>
+      <label>{label}</label>
+      <MediaUpload value={current} onChange={setCurrent} kind={kind} folder="site" />
+      <input type="hidden" name={name} value={current} />
+    </>
+  );
 }
 
 function Submit() {
@@ -119,14 +139,23 @@ export function SettingsForm({ settings }: { settings: Record<string, unknown> }
             {group.fields.map(([key, label, kind]) => (
               <div className="field" key={key}
                 style={kind ? { gridColumn: '1 / -1' } : undefined}>
-                <label htmlFor={key}>{label}</label>
-                {kind
-                  ? <textarea id={key} name={key} defaultValue={toField(settings[key])} />
-                  : <input
-                      id={key} name={key} type="text"
-                      defaultValue={toField(settings[key])}
-                      placeholder={PLACEHOLDERS[key]}
-                    />}
+                {kind === 'image' || kind === 'video' ? (
+                  <MediaField
+                    name={key} label={label} kind={kind}
+                    value={toField(settings[key])}
+                  />
+                ) : (
+                  <>
+                    <label htmlFor={key}>{label}</label>
+                    {kind
+                      ? <textarea id={key} name={key} defaultValue={toField(settings[key])} />
+                      : <input
+                          id={key} name={key} type="text"
+                          defaultValue={toField(settings[key])}
+                          placeholder={PLACEHOLDERS[key]}
+                        />}
+                  </>
+                )}
               </div>
             ))}
           </div>
