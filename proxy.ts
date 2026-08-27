@@ -15,11 +15,34 @@ import { NextResponse, type NextRequest } from 'next/server';
  *   2. Bounce anonymous requests to /login, and signed-in ones away from it.
  */
 export async function proxy(request: NextRequest) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // Without these, createServerClient throws and every single route returns an
+  // unexplained 500 — this gate runs before all of them. Say what is wrong
+  // instead, and keep failing closed: nobody reaches the dashboard either way.
+  //
+  // NEXT_PUBLIC_* values are inlined when the app is built, so setting them on
+  // the host is not enough on its own; the app has to be rebuilt afterwards.
+  if (!supabaseUrl || !supabaseKey) {
+    const missing = [
+      !supabaseUrl && 'NEXT_PUBLIC_SUPABASE_URL',
+      !supabaseKey && 'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    ].filter(Boolean).join(' and ');
+
+    return new NextResponse(
+      `This dashboard is not configured: ${missing} is missing.\n\n` +
+      'Set it in the hosting project\'s environment variables, then redeploy — ' +
+      'these values are compiled in at build time, so a redeploy is required.\n',
+      { status: 503, headers: { 'content-type': 'text/plain; charset=utf-8' } }
+    );
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    supabaseUrl,
+    supabaseKey,
     {
       cookies: {
         getAll() {
