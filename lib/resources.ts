@@ -341,6 +341,22 @@ export const RESOURCES: Resource[] = [
 
 export const getResource = (key: string) => RESOURCES.find((r) => r.key === key);
 
+/**
+ * A resource with `publicPath` removed, safe to hand to a client component.
+ *
+ * `publicPath` is a function, and functions cannot cross the server/client
+ * boundary — React refuses to serialise them. Passing a whole Resource into
+ * the form crashed the page with "Functions cannot be passed directly to
+ * Client Components". Taking this type instead makes that a compile error
+ * rather than a runtime one.
+ */
+export type FormResource = Omit<Resource, 'publicPath'>;
+
+export function toFormResource(resource: Resource): FormResource {
+  const { publicPath: _publicPath, ...rest } = resource;
+  return rest;
+}
+
 /** Human-readable column heading for the list view. */
 export function columnLabel(resource: Resource, column: string): string {
   return resource.fields.find((f) => f.column === column)?.label ?? column;

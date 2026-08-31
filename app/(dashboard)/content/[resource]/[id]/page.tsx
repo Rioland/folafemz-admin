@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import { getResource } from '@/lib/resources';
+import { getResource, toFormResource } from '@/lib/resources';
 import { SITE_URL } from '@/lib/env';
 import { ResourceForm, type Options } from '@/components/ResourceForm';
 import { DeleteRow } from '@/components/DeleteRow';
@@ -53,7 +53,7 @@ export default async function EditRowPage(props: {
       </div>
 
       <ResourceForm
-        resource={resource}
+        resource={toFormResource(resource)}
         row={row}
         options={options}
         action={updateRow}

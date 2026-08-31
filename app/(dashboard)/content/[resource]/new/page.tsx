@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getResource } from '@/lib/resources';
+import { getResource, toFormResource } from '@/lib/resources';
 import { ResourceForm, type Options } from '@/components/ResourceForm';
 import { createRow, referenceOptions } from '../../actions';
 
@@ -18,7 +18,7 @@ export default async function NewRowPage(props: {
   return (
     <>
       <div className="main__head"><h1>Add {resource.singular}</h1></div>
-      <ResourceForm resource={resource} row={{}} options={options} action={createRow} />
+      <ResourceForm resource={toFormResource(resource)} row={{}} options={options} action={createRow} />
     </>
   );
 }

@@ -5,7 +5,7 @@ import { useFormStatus } from 'react-dom';
 import Link from 'next/link';
 import { MediaUpload } from '@/components/MediaUpload';
 import { slugify } from '@/lib/types';
-import type { Field, Resource } from '@/lib/resources';
+import type { Field, FormResource } from '@/lib/resources';
 import type { FormState } from '@/app/(dashboard)/content/actions';
 
 export type Options = Record<string, { id: string; label: string }[]>;
@@ -150,7 +150,7 @@ function FieldInput({
 export function ResourceForm({
   resource, row, options, action, saved, publicUrl,
 }: {
-  resource: Resource;
+  resource: FormResource;
   row: Record<string, unknown>;
   options: Options;
   action: (prev: FormState, fd: FormData) => Promise<FormState>;
