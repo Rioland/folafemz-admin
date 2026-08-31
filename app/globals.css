@@ -185,3 +185,60 @@ video.uploader__preview { background: var(--asphalt); }
   .modal[open] { animation: modalIn .14s ease-out; }
   @keyframes modalIn { from { opacity: 0; transform: translateY(4px) scale(.99); } }
 }
+
+/* -----------------------------------------------------------------------
+   Rich text editor
+   ----------------------------------------------------------------------- */
+.editor { border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); }
+.editor:focus-within { border-color: var(--amber); }
+
+.editor__bar {
+  display: flex; flex-wrap: wrap; gap: .15rem; align-items: center;
+  padding: .4rem; border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 2;
+  background: var(--card); border-radius: var(--radius) var(--radius) 0 0;
+}
+.editor__btn {
+  border: 1px solid transparent; background: none; color: var(--muted);
+  border-radius: 4px; cursor: pointer; padding: .3rem .5rem;
+  font-size: .8125rem; font-weight: 600; line-height: 1.2; min-width: 1.9rem;
+}
+.editor__btn:hover { background: var(--line); color: var(--ink); }
+.editor__btn[aria-pressed='true'] { background: var(--amber); border-color: var(--amber); color: #10161f; }
+.editor__btn:disabled { opacity: .35; cursor: default; }
+.editor__sep { width: 1px; align-self: stretch; margin: .15rem .3rem; background: var(--line); }
+
+/* The writing surface mirrors the published article, so what is typed here
+   reads the way it will read on the site. */
+.editor__area { padding: 1rem 1.15rem; min-height: 22rem; max-height: 40rem; overflow-y: auto; }
+.editor__area .ProseMirror { outline: none; color: var(--ink); font-size: 1rem; line-height: 1.7; }
+.editor__area .ProseMirror > * + * { margin-top: .85em; }
+.editor__area h2 { font-size: 1.35rem; line-height: 1.3; margin-top: 1.6em; }
+.editor__area h3 { font-size: 1.1rem; line-height: 1.35; margin-top: 1.4em; }
+.editor__area ul, .editor__area ol { padding-left: 1.35rem; }
+.editor__area li + li { margin-top: .3em; }
+.editor__area blockquote {
+  border-left: 3px solid var(--amber); padding-left: .9rem; color: var(--muted); font-style: italic;
+}
+.editor__area a { color: var(--amber); text-decoration: underline; }
+.editor__area img { max-width: 100%; height: auto; border-radius: var(--radius); }
+.editor__area code {
+  background: var(--line); padding: .1rem .3rem; border-radius: 3px; font-size: .9em;
+}
+.editor__area hr { border: 0; border-top: 1px solid var(--line); }
+
+/* Placeholder text for an empty document. */
+.editor__area .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder); color: var(--muted); opacity: .65;
+  float: left; height: 0; pointer-events: none;
+}
+
+.editor__foot {
+  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  padding: .45rem .75rem; border-top: 1px solid var(--line);
+  font-size: .75rem; color: var(--muted);
+}
+
+/* Inline link entry, rather than a browser prompt(). */
+.editor__link { display: flex; gap: .35rem; align-items: center; flex: 1 1 16rem; }
+.editor__link input { padding: .3rem .5rem; font-size: .8125rem; height: auto; }

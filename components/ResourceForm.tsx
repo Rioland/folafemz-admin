@@ -4,6 +4,7 @@ import { useActionState, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import Link from 'next/link';
 import { MediaUpload } from '@/components/MediaUpload';
+import { RichText } from '@/components/RichText';
 import { slugify } from '@/lib/types';
 import type { Field, FormResource } from '@/lib/resources';
 import type { FormState } from '@/app/(dashboard)/content/actions';
@@ -44,6 +45,7 @@ function FieldInput({
 }) {
   const initial = toInput(field, value);
   const [media, setMedia] = useState(initial);
+  const [html, setHtml] = useState(initial);
 
   const id = field.column;
 
@@ -97,15 +99,26 @@ function FieldInput({
         </>
       );
 
-    case 'textarea':
     case 'richtext':
       return (
         <>
           <label htmlFor={id}>{field.label}</label>
-          <textarea
-            id={id} name={id} defaultValue={initial}
-            style={field.type === 'richtext' ? { minHeight: '260px' } : undefined}
+          <RichText
+            value={html}
+            onChange={setHtml}
+            folder={folder}
+            placeholder={`Write the ${field.label.toLowerCase()}\u2026`}
           />
+          {/* The editor is not a form control, so its HTML rides along here. */}
+          <input type="hidden" name={id} value={html} />
+        </>
+      );
+
+    case 'textarea':
+      return (
+        <>
+          <label htmlFor={id}>{field.label}</label>
+          <textarea id={id} name={id} defaultValue={initial} />
         </>
       );
 
