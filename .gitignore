@@ -22,3 +22,6 @@ Thumbs.db
 # logs
 *.log
 npm-debug.log*
+
+# scratch files from diagnostics — never commit, they can hold auth tokens
+.__*
