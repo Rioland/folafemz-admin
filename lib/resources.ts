@@ -26,6 +26,15 @@ export type Field = {
   refLabel?: string;
   /** Lay the field across the full width of the form grid. */
   wide?: boolean;
+  /**
+   * Value to store when the field is left empty.
+   *
+   * Some columns are NOT NULL with a database default. Writing null to one of
+   * those fails outright, so an optional field backed by such a column has to
+   * say what "empty" means. Without this, leaving Sort position blank made
+   * every create fail with a not-null violation.
+   */
+  fallback?: string | number;
 };
 
 export type Resource = {
@@ -52,7 +61,8 @@ export type Resource = {
 
 const POSITION: Field = {
   column: 'position', label: 'Sort position', type: 'number',
-  hint: 'Lower numbers come first.',
+  hint: 'Lower numbers come first. Leave empty for 0.',
+  fallback: 0,
 };
 
 export const RESOURCES: Resource[] = [
@@ -177,6 +187,7 @@ export const RESOURCES: Resource[] = [
       },
       {
         column: 'read_minutes', label: 'Read time (minutes)', type: 'number',
+        fallback: 4, hint: 'Leave empty for 4.',
       },
       { column: 'excerpt', label: 'Excerpt', type: 'textarea', wide: true },
       { column: 'body', label: 'Body', type: 'richtext', wide: true },
@@ -232,7 +243,7 @@ export const RESOURCES: Resource[] = [
       { column: 'quote', label: 'Quote', type: 'textarea', required: true, wide: true },
       {
         column: 'rating', label: 'Rating', type: 'select',
-        options: ['1', '2', '3', '4', '5'],
+        options: ['1', '2', '3', '4', '5'], fallback: 5,
       },
       { column: 'service', label: 'Service', type: 'text' },
       { column: 'reviewed_on', label: 'Reviewed on', type: 'date' },
@@ -250,7 +261,7 @@ export const RESOURCES: Resource[] = [
     ascending: true,
     fields: [
       { column: 'src', label: 'Image', type: 'image', required: true, wide: true },
-      { column: 'caption', label: 'Caption', type: 'text', wide: true },
+      { column: 'caption', label: 'Caption', type: 'text', wide: true, fallback: '' },
       POSITION,
     ],
   },
@@ -270,9 +281,9 @@ export const RESOURCES: Resource[] = [
       },
       {
         column: 'orientation', label: 'Orientation', type: 'select',
-        options: ['landscape', 'portrait'],
+        options: ['landscape', 'portrait'], fallback: 'landscape',
       },
-      { column: 'caption', label: 'Caption', type: 'text', wide: true },
+      { column: 'caption', label: 'Caption', type: 'text', wide: true, fallback: '' },
       POSITION,
     ],
   },
@@ -291,11 +302,11 @@ export const RESOURCES: Resource[] = [
     fields: [
       { column: 'base', label: 'From', type: 'text', required: true },
       { column: 'destination', label: 'To', type: 'text', required: true },
-      { column: 'note', label: 'Note', type: 'textarea', wide: true },
-      { column: 'escort_label', label: 'Escort label', type: 'text' },
-      { column: 'escort_rate', label: 'Escort rate (NGN)', type: 'number' },
-      { column: 'escort_unit', label: 'Escort unit', type: 'text' },
-      { column: 'escort_note', label: 'Escort note', type: 'textarea', wide: true },
+      { column: 'note', label: 'Note', type: 'textarea', wide: true, fallback: '' },
+      { column: 'escort_label', label: 'Escort label', type: 'text', fallback: '' },
+      { column: 'escort_rate', label: 'Escort rate (NGN)', type: 'number', fallback: 0 },
+      { column: 'escort_unit', label: 'Escort unit', type: 'text', fallback: '' },
+      { column: 'escort_note', label: 'Escort note', type: 'textarea', wide: true, fallback: '' },
       { column: 'is_active', label: 'This is the active table', type: 'boolean' },
     ],
   },

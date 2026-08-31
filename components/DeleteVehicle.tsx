@@ -1,18 +1,16 @@
 'use client';
 
 import { deleteVehicle } from '@/app/(dashboard)/vehicles/actions';
+import { ConfirmDelete } from '@/components/ConfirmDelete';
 
-/** Deleting a vehicle removes a live page, so it asks first. */
 export function DeleteVehicle({ id, name }: { id: string; name: string }) {
   return (
-    <form
+    <ConfirmDelete
       action={deleteVehicle}
-      onSubmit={(e) => {
-        if (!confirm(`Delete ${name}? This cannot be undone.`)) e.preventDefault();
-      }}
-    >
-      <input type="hidden" name="id" value={id} />
-      <button type="submit" className="btn btn--danger">Delete</button>
-    </form>
+      fields={{ id }}
+      name={name}
+      kind="vehicle"
+      consequence="It will disappear from the fleet on the website at the next publish."
+    />
   );
 }

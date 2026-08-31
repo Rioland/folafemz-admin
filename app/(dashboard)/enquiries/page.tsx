@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { ENQUIRY_STATUSES, type Enquiry } from '@/lib/types';
+import { DeleteEnquiry } from '@/components/DeleteEnquiry';
 import { StatusSelect } from '@/components/StatusSelect';
 
 export const metadata = { title: 'Enquiries — Folafemz Admin' };
@@ -40,7 +41,7 @@ export default async function EnquiriesPage(props: {
           <table>
             <thead>
               <tr>
-                <th>Received</th><th>Contact</th><th>Wants</th><th>Details</th><th>Status</th>
+                <th>Received</th><th>Contact</th><th>Wants</th><th>Details</th><th>Status</th><th></th>
               </tr>
             </thead>
             <tbody>
@@ -69,6 +70,7 @@ export default async function EnquiriesPage(props: {
                     {e.source && <div className="tag">{e.source}</div>}
                   </td>
                   <td><StatusSelect id={e.id} status={e.status} /></td>
+                  <td><DeleteEnquiry id={e.id} name={e.name || 'this enquiry'} /></td>
                 </tr>
               ))}
             </tbody>

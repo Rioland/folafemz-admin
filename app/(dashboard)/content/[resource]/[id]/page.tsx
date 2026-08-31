@@ -39,7 +39,17 @@ export default async function EditRowPage(props: {
     <>
       <div className="main__head">
         <h1>{heading}</h1>
-        <DeleteRow resourceKey={key} id={id} name={heading} />
+        <DeleteRow
+          resourceKey={key}
+          id={id}
+          name={heading}
+          kind={resource.singular}
+          consequence={
+            path
+              ? `Its page at ${path} will stop working, along with any links to it.`
+              : undefined
+          }
+        />
       </div>
 
       <ResourceForm

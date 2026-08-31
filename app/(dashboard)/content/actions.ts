@@ -27,7 +27,7 @@ function buildRow(resource: Resource, fd: FormData): Record<string, unknown> | {
       case 'number': {
         if (value === '') {
           if (field.required) return { error: `${field.label} is required.` };
-          row[field.column] = null;
+          row[field.column] = field.fallback ?? null;
           break;
         }
         const n = Number(value.replace(/[, ]/g, ''));
@@ -60,26 +60,12 @@ function buildRow(resource: Resource, fd: FormData): Record<string, unknown> | {
         if (field.required && value === '') {
           return { error: `${field.label} is required.` };
         }
-        // Empty clears the column rather than storing a blank string, except
-        // where the column is NOT NULL and carries a default of ''.
-        row[field.column] = value === '' ? (field.required ? '' : null) : value;
+        // Empty stores the declared fallback where the column is NOT NULL, and
+        // otherwise clears it rather than saving a blank string.
+        row[field.column] = value === '' ? (field.fallback ?? null) : value;
     }
   }
 
-  return row;
-}
-
-/** Columns declared NOT NULL DEFAULT '' in the schema cannot take null. */
-const NOT_NULL_TEXT: Record<string, string[]> = {
-  gallery: ['caption'],
-  videos: ['caption', 'orientation'],
-  trip_rate_tables: ['note', 'escort_label', 'escort_unit', 'escort_note'],
-};
-
-function coerceNotNull(resource: Resource, row: Record<string, unknown>) {
-  for (const column of NOT_NULL_TEXT[resource.table] ?? []) {
-    if (row[column] === null || row[column] === undefined) row[column] = '';
-  }
   return row;
 }
 
@@ -100,7 +86,7 @@ export async function createRow(_prev: FormState, fd: FormData): Promise<FormSta
   const supabase = await createClient();
   const { data, error } = await supabase
     .from(resource.table)
-    .insert(coerceNotNull(resource, row as Record<string, unknown>))
+    .insert(row as Record<string, unknown>)
     .select('id')
     .single();
 
@@ -124,7 +110,7 @@ export async function updateRow(_prev: FormState, fd: FormData): Promise<FormSta
   const supabase = await createClient();
   const { error } = await supabase
     .from(resource.table)
-    .update(coerceNotNull(resource, row as Record<string, unknown>))
+    .update(row as Record<string, unknown>)
     .eq('id', id);
 
   if (error) return { error: friendly(error.code, error.message) };

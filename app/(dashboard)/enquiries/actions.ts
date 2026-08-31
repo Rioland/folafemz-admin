@@ -18,3 +18,20 @@ export async function setStatus(fd: FormData) {
   revalidatePath('/enquiries');
   revalidatePath('/');
 }
+
+/**
+ * Removes an enquiry outright.
+ *
+ * Enquiries are a record of someone asking for a quote, so this is deliberate
+ * rather than routine — the dashboard asks before calling it. Marking one
+ * "closed" is usually the better move; this is for spam and duplicates.
+ */
+export async function deleteEnquiry(fd: FormData) {
+  const id = String(fd.get('id') ?? '');
+  if (!id) return;
+
+  const supabase = await createClient();
+  await supabase.from('enquiries').delete().eq('id', id);
+
+  revalidatePath('/enquiries');
+}

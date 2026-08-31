@@ -163,3 +163,25 @@ video.uploader__preview { background: var(--asphalt); }
 .uploader__actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .5rem; }
 .progress { height: 4px; background: var(--line); border-radius: 2px; margin-top: .6rem; overflow: hidden; }
 .progress__bar { height: 100%; background: var(--amber); transition: width .2s ease; }
+
+/* Confirmation dialog */
+.modal {
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--card); color: var(--ink);
+  padding: 1.5rem; max-width: 27rem; width: calc(100% - 2rem);
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, .45);
+}
+.modal::backdrop { background: rgba(8, 14, 26, .55); backdrop-filter: blur(2px); }
+.modal h2 { font-size: 1.0625rem; margin-bottom: .5rem; }
+.modal__body { color: var(--muted); font-size: .9375rem; line-height: 1.6; }
+.modal__body strong { color: var(--ink); }
+.modal__warn {
+  margin-top: .75rem; padding: .6rem .75rem; font-size: .875rem; line-height: 1.5;
+  border: 1px solid var(--amber); border-radius: var(--radius);
+  background: color-mix(in srgb, var(--amber) 12%, transparent);
+}
+.modal__actions { display: flex; gap: .5rem; justify-content: flex-end; margin-top: 1.25rem; }
+@media (prefers-reduced-motion: no-preference) {
+  .modal[open] { animation: modalIn .14s ease-out; }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(4px) scale(.99); } }
+}

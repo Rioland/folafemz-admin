@@ -1,23 +1,22 @@
 'use client';
 
 import { deleteRow } from '@/app/(dashboard)/content/actions';
+import { ConfirmDelete } from '@/components/ConfirmDelete';
 
-/** Deleting content can remove a live page, so it asks first. */
+/** Delete control for any content row, with our own confirmation step. */
 export function DeleteRow({
-  resourceKey, id, name,
+  resourceKey, id, name, kind, consequence,
 }: {
   resourceKey: string; id: string; name: string;
+  kind?: string; consequence?: string;
 }) {
   return (
-    <form
+    <ConfirmDelete
       action={deleteRow}
-      onSubmit={(e) => {
-        if (!confirm(`Delete "${name}"? This cannot be undone.`)) e.preventDefault();
-      }}
-    >
-      <input type="hidden" name="__resource" value={resourceKey} />
-      <input type="hidden" name="__id" value={id} />
-      <button type="submit" className="btn btn--danger">Delete</button>
-    </form>
+      fields={{ __resource: resourceKey, __id: id }}
+      name={name}
+      kind={kind ?? 'item'}
+      consequence={consequence}
+    />
   );
 }
