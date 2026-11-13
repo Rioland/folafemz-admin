@@ -1,0 +1,9 @@
+# Netlify build settings.
+#
+# Without a publish directory Netlify defaults it to the repository root, and
+# @netlify/plugin-nextjs refuses to run when the publish directory and the base
+# directory are the same. Next.js writes its output to .next, so name it here —
+# in the repo, where it cannot be lost the next time the site settings change.
+[build]
+  command = "npm run build"
+  publish = ".next"
