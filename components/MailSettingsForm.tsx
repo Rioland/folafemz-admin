@@ -92,7 +92,7 @@ export function MailSettingsForm({ settings }: { settings: MailSettings | null }
         <Submit />
         <button
           type="button"
-          className="btn"
+          className="btn btn--ghost"
           disabled={testing}
           onClick={() => startTest(async () => setTestState(await sendTestEmail()))}
         >
