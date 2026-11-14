@@ -57,6 +57,17 @@ export type EnquiryStatus = (typeof ENQUIRY_STATUSES)[number];
 
 export type SettingRow = { key: string; value: unknown };
 
+/** Single-row table (id = 1); the password is never sent to the browser. */
+export type MailSettings = {
+  to_address: string;
+  smtp_host: string;
+  smtp_port: number;
+  smtp_user: string;
+  from_name: string;
+  /** Whether a password is stored — the value itself stays on the server. */
+  has_password: boolean;
+};
+
 /** Blank vehicle for the "new vehicle" form. */
 export const emptyVehicle: Omit<Vehicle, 'id'> = {
   name: '', slug: '', category_id: null,

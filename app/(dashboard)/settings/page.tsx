@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { SettingsForm } from '@/components/SettingsForm';
+import { MailSettingsForm } from '@/components/MailSettingsForm';
+import { loadMailSettings } from './mail-actions';
 import type { SettingRow } from '@/lib/types';
 
 export const metadata = { title: 'Settings — Folafemz Admin' };
@@ -11,6 +13,8 @@ export default async function SettingsPage() {
 
   const settings: Record<string, unknown> = {};
   for (const row of data ?? []) settings[row.key] = row.value;
+
+  const mail = await loadMailSettings();
 
   return (
     <>
@@ -26,6 +30,17 @@ export default async function SettingsPage() {
       )}
 
       <SettingsForm settings={settings} />
+
+      <h2 style={{ marginTop: '2.5rem' }}>Email</h2>
+
+      {mail.error && (
+        <div className="notice notice--error">
+          Could not load the email settings: {mail.error}. If the table is missing, run
+          <code> supabase/migrations/2026-11-14-mail-settings.sql</code> in the Supabase SQL editor.
+        </div>
+      )}
+
+      <MailSettingsForm settings={mail.settings} />
     </>
   );
 }

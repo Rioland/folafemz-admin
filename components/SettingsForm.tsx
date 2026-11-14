@@ -25,7 +25,7 @@ const GROUPS: {
       ['phone', 'Main phone'],
       ['phoneAlt', 'Other phones (one per line)', 'lines'],
       ['whatsapp', 'WhatsApp number (international, no +)'],
-      ['email', 'Email'],
+      ['email', 'Email shown on the website'],
       ['addressPrimary', 'Address, primary'],
       ['addressSecondary', 'Address, secondary'],
       ['businessHours', 'Business hours'],
