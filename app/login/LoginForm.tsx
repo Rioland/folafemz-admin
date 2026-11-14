@@ -33,11 +33,6 @@ export function LoginForm({ next }: { next: string }) {
       </div>
 
       <Submit />
-
-      <p className="hint" style={{ marginTop: '1rem' }}>
-        Accounts are created in the Supabase dashboard under Authentication → Users.
-        There is no public sign-up.
-      </p>
     </form>
   );
 }
