@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { naira, type VehicleWithCategory } from '@/lib/types';
+import { mediaSrc } from '@/lib/env';
 
 export const metadata = { title: 'Fleet — Folafemz Admin' };
 export const dynamic = 'force-dynamic';
@@ -46,9 +47,9 @@ export default async function VehiclesPage() {
               {vehicles.map((v) => (
                 <tr key={v.id}>
                   <td>
-                    {/* Plain <img>: these are Supabase CDN URLs of unknown dimensions. */}
+                    {/* Plain <img>: remote files of unknown dimensions. */}
                     {v.image
-                      ? <img className="thumb" src={v.image} alt="" loading="lazy" />
+                      ? <img className="thumb" src={mediaSrc(v.image)} alt="" loading="lazy" />
                       : <span className="thumb" aria-hidden="true" />}
                   </td>
                   <td>

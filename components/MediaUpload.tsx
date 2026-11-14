@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { IMAGE_MAX_MB, VIDEO_MAX_MB } from '@/lib/env';
+import { IMAGE_MAX_MB, VIDEO_MAX_MB, mediaSrc } from '@/lib/env';
 
 export type MediaKind = 'image' | 'video' | 'any';
 
@@ -101,9 +101,9 @@ export function MediaUpload({
       <div className="uploader">
         {value ? (
           showVideo ? (
-            <video className="uploader__preview" src={value} controls muted playsInline />
+            <video className="uploader__preview" src={mediaSrc(value)} controls muted playsInline />
           ) : (
-            <img className="uploader__preview" src={value} alt="" />
+            <img className="uploader__preview" src={mediaSrc(value)} alt="" />
           )
         ) : (
           <span className="uploader__preview" aria-hidden="true" />

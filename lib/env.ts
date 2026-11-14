@@ -49,6 +49,18 @@ export const UPLOAD_MAX_BYTES = IMAGE_MAX_MB * 1024 * 1024;
 export const VIDEO_MAX_BYTES = VIDEO_MAX_MB * 1024 * 1024;
 
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || '';
+
+/**
+ * Where to load a stored media path from, for a preview in the admin.
+ *
+ * Content can point at a file the public website serves itself (a path such
+ * as /images/fleet/kia-rio.jpg) as well as at an upload in Supabase storage
+ * (a full URL). The admin runs on its own domain, where the website's files
+ * do not exist, so a site-relative path is resolved against the public site.
+ */
+export function mediaSrc(path: string): string {
+  return path.startsWith('/') && SITE_URL ? `${SITE_URL}${path}` : path;
+}
 export const DEPLOY_HOOK_URL = process.env.DEPLOY_HOOK_URL || '';
 
 /**
